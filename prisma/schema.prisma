@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  authorToken String
+  isClosed    Boolean  @default(false)
+  closedAt    DateTime?
+  createdAt   DateTime @default(now())
+  
+  options     Option[]
+  comments    Comment[]
+  
+  @@index([createdAt])
+}
+
+model Option {
+  id      String @id @default(cuid())
+  text    String
+  votes   Int    @default(0)
+  postId  String
+  
+  post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comments Comment[]
+  
+  @@index([postId])
+}
+
+model Comment {
+  id                String   @id @default(cuid())
+  author            String
+  text              String   @db.Text
+  supportedOptionId String?
+  createdAt         DateTime @default(now())
+  postId            String
+  
+  post              Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  supportedOption   Option?  @relation(fields: [supportedOptionId], references: [id], onDelete: SetNull)
+  
+  @@index([postId])
+  @@index([supportedOptionId])
+}

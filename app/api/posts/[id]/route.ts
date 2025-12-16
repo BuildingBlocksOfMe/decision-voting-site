@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await context.params;
-    const post = getPostById(id);
+    const post = await getPostById(id);
     
     if (!post) {
       return NextResponse.json(

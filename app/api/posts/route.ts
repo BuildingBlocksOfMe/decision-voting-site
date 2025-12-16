@@ -5,7 +5,7 @@ import { CreatePostRequest, CreatePostResponse } from '@/types';
 // GET /api/posts - Get all posts
 export async function GET() {
   try {
-    const posts = readPosts();
+    const posts = await readPosts();
     return NextResponse.json(posts);
   } catch (error) {
     console.error('Error fetching posts:', error);
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const authorToken = generateAuthorToken();
     
     // Create the post
-    const post = createPost(
+    const post = await createPost(
       body.title.trim(),
       body.description.trim(),
       body.options.map(opt => opt.trim()),

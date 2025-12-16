@@ -12,7 +12,7 @@ export default async function HomePage({
   const { locale } = await params as { locale: Locale };
   const translations = await getTranslations(locale);
   const t = createTranslator(translations);
-  const posts = readPosts();
+  const posts = await readPosts();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

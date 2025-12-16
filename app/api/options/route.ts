@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const post = addOption(body.postId, body.optionText.trim());
+    const post = await addOption(body.postId, body.optionText.trim());
     
     if (!post) {
       return NextResponse.json(

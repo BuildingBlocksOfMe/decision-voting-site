@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const post = addVote(body.postId, body.optionId);
+    const post = await addVote(body.postId, body.optionId);
     
     if (!post) {
       return NextResponse.json(

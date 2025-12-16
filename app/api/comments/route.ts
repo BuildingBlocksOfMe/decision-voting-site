@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     
     const author = body.author?.trim() || 'Anonymous';
     
-    const post = addComment(
+    const post = await addComment(
       body.postId,
       author,
       body.text.trim(),

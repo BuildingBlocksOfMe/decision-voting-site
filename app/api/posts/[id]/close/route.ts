@@ -18,7 +18,7 @@ export async function POST(
       );
     }
     
-    const post = closePost(id, body.authorToken);
+    const post = await closePost(id, body.authorToken);
     
     if (!post) {
       return NextResponse.json(
