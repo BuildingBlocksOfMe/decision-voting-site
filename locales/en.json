@@ -1,0 +1,82 @@
+{
+  "common": {
+    "title": "Let's Decide Together",
+    "create": "Create Post",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save",
+    "back": "Back"
+  },
+  "home": {
+    "heading": "Share what you can't decide",
+    "subheading": "Get help from others through voting and discussion",
+    "noPosts": "No posts yet",
+    "createFirst": "Create the first post!"
+  },
+  "create": {
+    "title": "Create New Post",
+    "titleLabel": "Title",
+    "titlePlaceholder": "e.g., Which job offer should I accept?",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Describe your situation and dilemma in detail...",
+    "optionsLabel": "Options",
+    "optionPlaceholder": "Option {number}",
+    "addOption": "Add Option",
+    "removeOption": "Remove",
+    "minOptions": "At least 2 options are required",
+    "maxOptions": "Maximum 10 options allowed",
+    "submit": "Create Post",
+    "creating": "Creating..."
+  },
+  "post": {
+    "vote": "Vote",
+    "voted": "Voted",
+    "close": "Close Poll",
+    "closed": "Closed",
+    "confirmClose": "Are you sure you want to close this poll? This action cannot be undone.",
+    "tabDiscussion": "Vote & Discussion",
+    "tabResults": "Results & Summary",
+    "addComment": "Add Comment",
+    "commentPlaceholder": "Share your thoughts...",
+    "selectOption": "Select option you support (optional)",
+    "noSelection": "None",
+    "postComment": "Post Comment",
+    "comments": "Comments",
+    "noComments": "No comments yet",
+    "anonymous": "Anonymous",
+    "supports": "supports {option}",
+    "addOption": "Add Option",
+    "addOptionButton": "Add New Option",
+    "optionPlaceholder": "Enter new option...",
+    "addingOption": "Adding...",
+    "optionAdded": "Option added successfully",
+    "optionExists": "This option already exists",
+    "cannotAddToClosed": "Cannot add options to a closed poll"
+  },
+  "results": {
+    "title": "Voting Results",
+    "summary": "Discussion Summary",
+    "votes": "votes",
+    "percentage": "{percent}%",
+    "totalVotes": "{count} total votes",
+    "noVotes": "No votes yet",
+    "winner": "Most Voted",
+    "supporting": "Supporting {option}",
+    "supportCount": "{count} comments",
+    "neutralComments": "Neutral Comments",
+    "noComments": "No comments"
+  },
+  "card": {
+    "createdAt": "Posted",
+    "votes": "{count} votes",
+    "comments": "{count} comments",
+    "status": "Status",
+    "open": "Open",
+    "closed": "Closed"
+  }
+}
+

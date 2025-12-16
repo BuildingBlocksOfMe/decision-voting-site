@@ -1,0 +1,82 @@
+{
+  "common": {
+    "title": "みんなで決めよう",
+    "create": "新規投稿",
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "submit": "送信",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "save": "保存",
+    "back": "戻る"
+  },
+  "home": {
+    "heading": "決められない悩みを投稿しよう",
+    "subheading": "他の人の意見と投票で、あなたの決断をサポートします",
+    "noPosts": "まだ投稿がありません",
+    "createFirst": "最初の投稿を作成しましょう！"
+  },
+  "create": {
+    "title": "新規投稿を作成",
+    "titleLabel": "タイトル",
+    "titlePlaceholder": "例：どの転職先を選ぶべき？",
+    "descriptionLabel": "状況説明",
+    "descriptionPlaceholder": "あなたの状況や悩みを詳しく説明してください...",
+    "optionsLabel": "選択肢",
+    "optionPlaceholder": "選択肢 {number}",
+    "addOption": "選択肢を追加",
+    "removeOption": "削除",
+    "minOptions": "最低2つの選択肢が必要です",
+    "maxOptions": "選択肢は最大10個までです",
+    "submit": "投稿する",
+    "creating": "投稿中..."
+  },
+  "post": {
+    "vote": "投票する",
+    "voted": "投票済み",
+    "close": "投票を締め切る",
+    "closed": "締切済",
+    "confirmClose": "投票を締め切りますか？この操作は取り消せません。",
+    "tabDiscussion": "投票と議論",
+    "tabResults": "結果と総括",
+    "addComment": "コメントを追加",
+    "commentPlaceholder": "あなたの意見を書いてください...",
+    "selectOption": "支持する選択肢を選ぶ（任意）",
+    "noSelection": "特になし",
+    "postComment": "コメントを投稿",
+    "comments": "コメント",
+    "noComments": "まだコメントがありません",
+    "anonymous": "匿名ユーザー",
+    "supports": "が{option}を支持",
+    "addOption": "選択肢を追加",
+    "addOptionButton": "新しい選択肢を追加",
+    "optionPlaceholder": "新しい選択肢を入力...",
+    "addingOption": "追加中...",
+    "optionAdded": "選択肢が追加されました",
+    "optionExists": "この選択肢は既に存在します",
+    "cannotAddToClosed": "締め切られた投票には選択肢を追加できません"
+  },
+  "results": {
+    "title": "投票結果",
+    "summary": "議論の総括",
+    "votes": "票",
+    "percentage": "{percent}%",
+    "totalVotes": "合計 {count} 票",
+    "noVotes": "まだ投票がありません",
+    "winner": "最多得票",
+    "supporting": "{option}を支持する意見",
+    "supportCount": "{count}件",
+    "neutralComments": "どちらでもない意見",
+    "noComments": "コメントがありません"
+  },
+  "card": {
+    "createdAt": "投稿日",
+    "votes": "{count}票",
+    "comments": "{count}件のコメント",
+    "status": "ステータス",
+    "open": "投票受付中",
+    "closed": "締切済"
+  }
+}
+
