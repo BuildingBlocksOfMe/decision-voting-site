@@ -7,9 +7,9 @@ import Link from 'next/link';
 export default async function HomePage({
   params,
 }: {
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const { locale } = await params as { locale: Locale };
   const translations = await getTranslations(locale);
   const t = createTranslator(translations);
   const posts = readPosts();
