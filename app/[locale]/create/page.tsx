@@ -75,7 +75,8 @@ export default function CreatePage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create post');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || errorData.message || 'Failed to create post');
       }
 
       const data = await response.json();
@@ -85,9 +86,10 @@ export default function CreatePage() {
       
       // Redirect to the new post
       router.push(`/${locale}/post/${data.post.id}`);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error creating post:', err);
-      setError(isJapanese ? '投稿の作成に失敗しました' : 'Failed to create post');
+      const errorMessage = err?.message || (isJapanese ? '投稿の作成に失敗しました' : 'Failed to create post');
+      setError(errorMessage);
       setSubmitting(false);
     }
   };

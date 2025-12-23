@@ -76,10 +76,14 @@ export async function POST(request: NextRequest) {
     };
     
     return NextResponse.json(response, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating post:', error);
     return NextResponse.json(
-      { error: 'Failed to create post' },
+      { 
+        error: 'Failed to create post',
+        message: error?.message || 'Unknown error',
+        details: process.env.NODE_ENV === 'development' ? error?.stack : undefined
+      },
       { status: 500 }
     );
   }

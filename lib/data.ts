@@ -3,14 +3,21 @@ import fs from 'fs';
 import path from 'path';
 
 // JSON storage
-const DATA_FILE = path.join(process.cwd(), 'data', 'posts.json');
+// In Vercel/serverless, use /tmp directory (only writable location)
+// In local development, use data directory
+const isVercel = process.env.VERCEL === '1' || process.env.NEXT_PUBLIC_VERCEL === '1';
+const DATA_FILE = isVercel
+  ? '/tmp/posts.json'
+  : path.join(process.cwd(), 'data', 'posts.json');
 
 // Ensure data directory and file exist
 function ensureDataFile() {
-  const dataDir = path.dirname(DATA_FILE);
-
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+  // In Vercel, /tmp directory already exists, no need to create
+  if (!isVercel) {
+    const dataDir = path.dirname(DATA_FILE);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
   }
 
   if (!fs.existsSync(DATA_FILE)) {
@@ -35,10 +42,17 @@ function readFromJson(): Post[] {
 
 // Write to JSON file
 function writeToJson(posts: Post[]): void {
-  ensureDataFile();
+  try {
+    ensureDataFile();
 
-  const data = { posts };
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    const data = { posts };
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (error: any) {
+    console.error('Error writing to JSON file:', error);
+    console.error('Data file path:', DATA_FILE);
+    console.error('Is Vercel:', isVercel);
+    throw new Error(`Failed to write data: ${error?.message || 'Unknown error'}`);
+  }
 }
 
 
