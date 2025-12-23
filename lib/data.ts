@@ -316,7 +316,7 @@ export async function addOption(postId: string, optionText: string): Promise<Pos
 
     // Check if option already exists (case-insensitive)
     const optionExists = post.options.some(
-      (opt) => opt.text.toLowerCase() === optionText.toLowerCase()
+      (opt: Option) => opt.text.toLowerCase() === optionText.toLowerCase()
     );
 
     if (optionExists) {
