@@ -11,15 +11,21 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 export const prisma =
   globalForPrisma.prisma ||
   (() => {
-    // Use Vercel Postgres adapter in production
-    if (process.env.POSTGRES_PRISMA_URL) {
+    // In development, don't initialize Prisma at all - use JSON storage
+    if (process.env.NODE_ENV === 'development') {
+      throw new Error('Using JSON storage in development');
+    }
+
+    // Check if we have Vercel Postgres environment variables
+    if (process.env.POSTGRES_PRISMA_URL && process.env.POSTGRES_URL_NON_POOLING) {
+      // Use Vercel Postgres adapter in production
       const pool = new Pool({ connectionString: process.env.POSTGRES_PRISMA_URL });
       const adapter = new PrismaPg(pool);
       return new PrismaClient({ adapter, log: ['error'] });
     }
-    
-    // Use standard connection in development
-    return new PrismaClient({ log: ['error'] });
+
+    // For production without database, throw an error
+    throw new Error('Database not configured. Please set up Vercel Postgres.');
   })();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

@@ -1,5 +1,47 @@
 import { prisma } from './prisma';
 import { Post, Option, Comment } from '@/types';
+import fs from 'fs';
+import path from 'path';
+
+// Fallback to JSON storage
+const DATA_FILE = path.join(process.cwd(), 'data', 'posts.json');
+const USE_JSON_STORAGE = true; // Always use JSON storage for now
+
+// Ensure data directory and file exist
+function ensureDataFile() {
+  const dataDir = path.dirname(DATA_FILE);
+
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+
+  if (!fs.existsSync(DATA_FILE)) {
+    const initialData = { posts: [] };
+    fs.writeFileSync(DATA_FILE, JSON.stringify(initialData, null, 2), 'utf-8');
+  }
+}
+
+// Read from JSON file
+function readFromJson(): Post[] {
+  ensureDataFile();
+
+  try {
+    const fileContent = fs.readFileSync(DATA_FILE, 'utf-8');
+    const data = JSON.parse(fileContent);
+    return data.posts || [];
+  } catch (error) {
+    console.error('Error reading JSON file:', error);
+    return [];
+  }
+}
+
+// Write to JSON file
+function writeToJson(posts: Post[]): void {
+  ensureDataFile();
+
+  const data = { posts };
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+}
 
 // Convert Prisma Post to our Post type
 function toPrismaPost(prismaPost: any): Post {
@@ -28,7 +70,13 @@ function toPrismaPost(prismaPost: any): Post {
 
 // Read all posts
 export async function readPosts(): Promise<Post[]> {
+  if (USE_JSON_STORAGE) {
+    return readFromJson();
+  }
+
   try {
+    // Dynamically import prisma to avoid initialization in development
+    const { prisma } = await import('./prisma');
     const posts = await prisma.post.findMany({
       include: {
         options: {
@@ -45,8 +93,8 @@ export async function readPosts(): Promise<Post[]> {
 
     return posts.map(toPrismaPost);
   } catch (error) {
-    console.error('Error reading posts:', error);
-    return [];
+    console.error('Error reading posts from database, falling back to JSON:', error);
+    return readFromJson();
   }
 }
 
@@ -81,26 +129,81 @@ export async function createPost(
   optionTexts: string[],
   authorToken: string
 ): Promise<Post> {
-  const post = await prisma.post.create({
-    data: {
+  if (USE_JSON_STORAGE) {
+    const posts = readFromJson();
+
+    const newPost: Post = {
+      id: generateId(),
       title,
       description,
       authorToken,
-      options: {
-        create: optionTexts.map((text, index) => ({
-          id: `option-${Date.now()}-${index}`,
-          text,
-          votes: 0,
-        })),
-      },
-    },
-    include: {
-      options: true,
-      comments: true,
-    },
-  });
+      options: optionTexts.map((text, index) => ({
+        id: `option-${Date.now()}-${index}`,
+        text,
+        votes: 0,
+      })),
+      comments: [],
+      isClosed: false,
+      closedAt: null,
+      createdAt: new Date().toISOString(),
+    };
 
-  return toPrismaPost(post);
+    posts.unshift(newPost);
+    writeToJson(posts);
+
+    return newPost;
+  }
+
+  try {
+    // Dynamically import prisma to avoid initialization in development
+    const { prisma } = await import('./prisma');
+    const post = await prisma.post.create({
+      data: {
+        title,
+        description,
+        authorToken,
+        options: {
+          create: optionTexts.map((text, index) => ({
+            id: `option-${Date.now()}-${index}`,
+            text,
+            votes: 0,
+          })),
+        },
+      },
+      include: {
+        options: true,
+        comments: true,
+      },
+    });
+
+    return toPrismaPost(post);
+  } catch (error) {
+    console.error('Error creating post in database, falling back to JSON:', error);
+    // Fallback to JSON storage - recursive call will use JSON storage
+    const USE_JSON_STORAGE_BACKUP = true;
+    const posts = readFromJson();
+
+    const newPost: Post = {
+      id: generateId(),
+      title,
+      description,
+      authorToken,
+      options: optionTexts.map((text, index) => ({
+        id: `option-${Date.now()}-${index}`,
+        text,
+        votes: 0,
+      })),
+      comments: [],
+      isClosed: false,
+      closedAt: null,
+      createdAt: new Date().toISOString(),
+    };
+
+    posts.unshift(newPost);
+    writeToJson(posts);
+
+    return newPost;
+  }
 }
 
 // Add a vote to an option
@@ -234,6 +337,11 @@ export async function addOption(postId: string, optionText: string): Promise<Pos
     console.error('Error adding option:', error);
     throw error;
   }
+}
+
+// Generate a unique ID
+function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
 // Generate an author token
