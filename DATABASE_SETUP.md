@@ -19,91 +19,36 @@
 
 データベース作成後、以下の環境変数が自動的に設定されます：
 
-- `POSTGRES_PRISMA_URL` - Connection pooling用のURL
-- `POSTGRES_URL_NON_POOLING` - Direct connection用のURL
 - `POSTGRES_URL` - 標準のPostgreSQL URL
 - `POSTGRES_HOST`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DATABASE`
 
 これらの環境変数は自動的にデプロイメントに注入されます。
 
-### 3. データベーススキーマのマイグレーション
+### 3. テーブル作成（自動）
 
-データベースが作成されたら、スキーマを適用する必要があります：
+このプロジェクトは **Prisma は使いません**。アプリ起動時にAPI側で `CREATE TABLE IF NOT EXISTS ...` を実行して、必要なテーブルを自動作成します。
 
-```bash
-# Vercel環境変数を使用してマイグレーションを実行
-npx prisma migrate deploy
-```
-
-または、Vercelのビルドコマンドに追加：
-
-1. Vercelダッシュボード → Settings → General → Build & Development Settings
-2. Build Commandを以下に変更：
-   ```
-   npx prisma generate && npx prisma migrate deploy && next build
-   ```
-
-### 4. 初回マイグレーションの作成（開発時のみ）
-
-ローカルで開発する場合：
-
-```bash
-# ローカルPostgreSQLを起動
-# .envファイルにローカルのデータベースURLを設定
-
-# マイグレーションを作成
-npx prisma migrate dev --name init
-```
-
-## package.jsonのビルドスクリプト更新
-
-`package.json`の`build`スクリプトを以下のように更新することを推奨します：
-
-```json
-{
-  "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && prisma migrate deploy && next build",
-    "start": "next start",
-    "lint": "next lint"
-  }
-}
-```
-
-これにより、Vercelでのビルド時に自動的に：
-1. Prisma Clientが生成され
-2. データベーススキーマがマイグレーションされ
-3. Next.jsアプリがビルドされます
+そのため **Vercel Postgres を作成して環境変数が入れば、そのまま動作します**。
 
 ## トラブルシューティング
 
-### エラー: P2010 - Raw query failed
+### 投稿が作れない / APIが500になる
 
-データベーステーブルが存在しない場合、まずマイグレーションを実行してください：
-
-```bash
-npx prisma migrate deploy
-```
+- VercelのStorageで **Postgresが作成されているか**
+- プロジェクトのEnvironment Variablesに **`POSTGRES_URL` が存在するか**
 
 ### ローカル開発
 
-ローカルで開発する場合は、PostgreSQLをインストールして起動し、`.env`ファイルに接続情報を設定してください：
+ローカルで開発する場合は、PostgreSQLをインストールして起動し、`POSTGRES_URL` を環境変数として設定してください：
 
 ```bash
-# .env
-POSTGRES_PRISMA_URL="postgresql://user:password@localhost:5432/decision_voting_db?pgbouncer=true"
-POSTGRES_URL_NON_POOLING="postgresql://user:password@localhost:5432/decision_voting_db"
-```
-
-その後、マイグレーションを実行：
-
-```bash
-npx prisma migrate dev
+# 例（bash）
+export POSTGRES_URL="postgresql://user:password@localhost:5432/decision_voting_db"
 ```
 
 ## データベーススキーマ
 
-現在のスキーマ：
+アプリが自動作成するテーブル：
 
 - **Post** - 投稿
   - id, title, description, authorToken
@@ -118,5 +63,7 @@ npx prisma migrate dev
   - id, author, text, supportedOptionId, createdAt, postId
   - リレーション: post, supportedOption
 
-スキーマの詳細は `prisma/schema.prisma` を参照してください。
+スキーマの詳細は `lib/data.ts` の `ensureSchema()` を参照してください。
+
+
 
