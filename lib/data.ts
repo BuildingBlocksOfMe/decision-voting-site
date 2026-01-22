@@ -1,8 +1,27 @@
-import { sql } from '@vercel/postgres';
+import { createPool } from '@vercel/postgres';
 import { randomUUID } from 'crypto';
 import { Post, Option, Comment } from '@/types';
 
+const connectionString =
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL ||
+  '';
+
+const pool = createPool(
+  connectionString
+    ? { connectionString }
+    : undefined
+);
+
+const sql = pool.sql;
+
 async function ensureSchema() {
+  if (!connectionString) {
+    throw new Error(
+      'Database connection is not configured. Set POSTGRES_URL (recommended) or DATABASE_URL in Vercel Environment Variables.'
+    );
+  }
+
   await sql`
     CREATE TABLE IF NOT EXISTS posts (
       id TEXT PRIMARY KEY,

@@ -67,3 +67,4 @@ export POSTGRES_URL="postgresql://user:password@localhost:5432/decision_voting_d
 
 
 
+
