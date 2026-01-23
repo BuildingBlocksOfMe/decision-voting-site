@@ -11,7 +11,8 @@ if (!connectionString) {
 }
 
 const pool = createPool({ connectionString });
-const sql = pool.sql;
+// pool.sql relies on pool instance context; bind to avoid "this" being undefined.
+const sql = pool.sql.bind(pool);
 
 async function ensureSchema() {
   await sql`
