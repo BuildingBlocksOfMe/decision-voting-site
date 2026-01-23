@@ -2,26 +2,18 @@ import { createPool } from '@vercel/postgres';
 import { randomUUID } from 'crypto';
 import { Post, Option, Comment } from '@/types';
 
-const connectionString =
-  process.env.POSTGRES_URL ||
-  process.env.DATABASE_URL ||
-  '';
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+if (!connectionString) {
+  // Fail fast with a clear message; API routes will return this in JSON error.message.
+  throw new Error(
+    'Database connection is not configured. Set POSTGRES_URL (recommended) or DATABASE_URL in Vercel Environment Variables.'
+  );
+}
 
-const pool = createPool(
-  connectionString
-    ? { connectionString }
-    : undefined
-);
-
+const pool = createPool({ connectionString });
 const sql = pool.sql;
 
 async function ensureSchema() {
-  if (!connectionString) {
-    throw new Error(
-      'Database connection is not configured. Set POSTGRES_URL (recommended) or DATABASE_URL in Vercel Environment Variables.'
-    );
-  }
-
   await sql`
     CREATE TABLE IF NOT EXISTS posts (
       id TEXT PRIMARY KEY,
